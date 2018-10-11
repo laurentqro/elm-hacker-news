@@ -1,9 +1,19 @@
-module Main exposing (Model, Msg(..), init, main, subscriptions, update, view, viewLink)
+module Main exposing
+    ( Model
+    , Msg(..)
+    , init
+    , main
+    , subscriptions
+    , update
+    , view
+    )
 
 import Browser
 import Browser.Navigation as Nav
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import Page.NotFound as NotFound
+import Page.Stories as Stories
 import Url
 
 
@@ -29,7 +39,7 @@ main =
 
 init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
 init _ url key =
-    ( Model key url, Cmd.none )
+    ( { key = key, page = NotFound }, Cmd.none )
 
 
 
@@ -38,8 +48,13 @@ init _ url key =
 
 type alias Model =
     { key : Nav.Key
-    , url : Url.Url
+    , page : Page
     }
+
+
+type Page
+    = NotFound
+    | Stories Stories.Model
 
 
 
@@ -63,7 +78,7 @@ update msg model =
                     ( model, Nav.load href )
 
         UrlChanged url ->
-            ( { model | url = url }, Cmd.none )
+            ( model, Cmd.none )
 
 
 
@@ -81,21 +96,9 @@ subscriptions _ =
 
 view : Model -> Browser.Document Msg
 view model =
-    { title = "URL Interceptor"
-    , body =
-        [ text "The current URL is: "
-        , b [] [ text (Url.toString model.url) ]
-        , ul []
-            [ viewLink "/home"
-            , viewLink "/profile"
-            , viewLink "/reviews/the-century-of-the-self"
-            , viewLink "/reviews/public-opinion"
-            , viewLink "/reviews/shah-of-shahs"
-            ]
-        ]
-    }
+    case model.page of
+        Stories stories ->
+            Stories.view stories
 
-
-viewLink : String -> Html msg
-viewLink path =
-    li [] [ a [ href path ] [ text path ] ]
+        NotFound ->
+            NotFound.view
