@@ -1,4 +1,4 @@
-module Page.Stories exposing (Model, Msg, init, view)
+module Page.Story exposing (Model, Msg, init, view)
 
 import Browser
 import Html exposing (..)
@@ -23,10 +23,6 @@ view : Model -> Browser.Document msg
 view model =
     { title = model.title
     , body =
-        [ text "Hello from the stories page"
-        , ul []
-            [ li [] [ a [ href "stories" ] [ text "stories" ] ]
-            , li [] [ a [ href "story" ] [ text "story" ] ]
-            ]
+        [ text "This is the individual story page"
         ]
     }
